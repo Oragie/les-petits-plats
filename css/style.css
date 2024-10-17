@@ -123,11 +123,11 @@ header {
 /* Bouton de recherche */
 .search-button {
   position: absolute;
-  top: 50%;
-  right: 20px;
+  top: 56%;
+  right: 10px;
   transform: translateY(-50%);
-  width: 2rem;
-  height: 2rem;
+  width: 4rem;
+  height: 4rem;
   background: var(--secondary-color);
   border: none;
   cursor: pointer;
