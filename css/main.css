@@ -1,0 +1,95 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f8f8;
+    color: #333;
+}
+
+header {
+    padding: 20px;
+    background-color: #222;
+    color: white;
+    text-align: center;
+}
+
+.hero {
+    text-align: center;
+    background-image: url('https://via.placeholder.com/1500x500');
+    background-size: cover;
+    padding: 40px;
+    color: yellow;
+}
+
+.hero input {
+    padding: 10px;
+    width: 60%;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-right: 10px;
+}
+
+.hero button {
+    padding: 10px;
+    border: none;
+    background-color: black;
+    color: white;
+    cursor: pointer;
+}
+
+.filters {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.filters select {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.tag {
+    padding: 10px 20px;
+    background-color: yellow;
+    border-radius: 20px;
+}
+
+.recipes {
+    display: flex;
+    justify-content: space-around;
+    padding: 20px;
+}
+
+.recipe-card {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 30%;
+}
+
+.recipe-card h3 {
+    margin-bottom: 10px;
+}
+
+.recipe-time {
+    font-size: 14px;
+    color: #666;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.recipe-card ul {
+    list-style-type: none;
+    margin-bottom: 10px;
+}
+
+.recipe-card p {
+    font-size: 14px;
+}
