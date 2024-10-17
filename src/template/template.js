@@ -1,4 +1,4 @@
-import { Header } from "../components/Header.js";
+import { Header } from "../src/components/Header.js";
 import { Hero } from "../src/components/Hero.js";
 import { Filter } from "../src/components/Filter.js";
 import { Recipes } from "../src/components/Recipes.js";
