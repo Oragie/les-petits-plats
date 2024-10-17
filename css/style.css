@@ -9,6 +9,32 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* color variable */
+    --primary-color:  #FFD15B;
+    --secondary-color: #1B1B1B;
+    --black-color:black;
+    --fadedtext-color: #7A7A7A;
+    --bg-color: #EDEDED;
+
+}
+
+/* Définition des polices locales */
+/* Manrope */
+@font-face {
+  font-family: 'Manrope';
+  src: url('../assets/fonts/Manrope/static/Manrope-Regular.ttf') format('truetype'),
+       url('../assets/fonts/Manrope/static/Manrope-Bold.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Anton */
+@font-face {
+  font-family: 'Anton';
+  src: url('../assets/fonts/Anton/Anton-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
 }
 
 body {
@@ -18,16 +44,18 @@ body {
   align-items: center;
   min-width: 320px;
   min-height: 100vh;
-  background-color: #242424;
+  background-color: var(--bg-color);
   color: white;
 }
 
 header {
-  position: relative; /* Important pour positionner le h1 par rapport au header */
+  position: relative; 
   width: 100%;
   height: 667px; /* Par défaut */
   background-size: cover;
   background-position: center;
+  justify-content: center; /* Centre horizontalement */
+  align-items: center; /* Centre verticalement */
 }
 
 @media (max-width: 1440px) {
@@ -36,7 +64,7 @@ header {
   }
 }
 
-h1 {
+.logo {
   position: absolute; /* Pour placer le titre en haut à gauche */
   top: 50px;
   left: 70px;
@@ -44,38 +72,87 @@ h1 {
   height: 25px;
   font-size: 1.5em; 
   line-height: 1.1;
-  color: yellow; 
+  color: var(--primary-color); 
 }
 
 .hero {
+  position : absolute;
+  top: 200px;
+  right: 10%;
+  left:10%;
   text-align: center;
-  background-size: cover;
   padding: 60px;
-  color: yellow;
+  color: var(--primary-color);
 }
 
-.hero input {
-  padding: 12px;
-  width: 50%;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  margin-right: 10px;
-  background-color: #f9f9f9;
-  color: #333;
+.hero-text {
+  max-width: 65%; /* Limite la largeur pour que le texte ne s'étende pas trop */
+  margin: 0 auto; /* Centre le conteneur de texte */
 }
 
-.hero button {
-  padding: 12px;
-  border-radius: 8px;
+.hero h2 {
+  font-size: 2em; /* Ajuste la taille de la police */
+  line-height: 1.2; /* Espace entre les lignes */
+  margin: 0; /* Supprime les marges par défaut */
+  overflow-wrap: break-word; /* Permet le passage à la ligne */
+}
+
+/* Conteneur de la barre de recherche */
+.search-container {
+  position: relative;
+  display: inline-block;
+}
+
+.search-container input {
+  width: 954px;
+  height: 45px;
+  padding: 20px;
+  padding-right: 60px; /* Réserver de la place pour le bouton */
+  font-size: 1.2em;
+  background:var(--bg-color);
   border: none;
-  background-color: #646cff;
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.3s;
+  margin-top: 1.2rem;
+  border-radius: 8px;
+  color: var(--secondary-color);
 }
 
-.hero button:hover {
-  background-color: #535bf2;
+.search-container input:focus {
+  outline: none;
+}
+
+/* Bouton de recherche */
+.search-button {
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+  width: 2rem;
+  height: 2rem;
+  background: var(--secondary-color);
+  border: none;
+  cursor: pointer;
+}
+
+.search-button img {
+  width: 100%;
+  height: auto;
+}
+
+/* Hover et animations */
+.search-button:hover {
+  background: #ffd15b;
+  transition: background-color ease-out 300ms;
+}
+
+.search-button:active {
+  width: 51px;
+  height: 52px;
+  transition: all ease-out 300ms;
+  opacity: 0;
+}
+
+.search-button:active img {
+  opacity: 0;
 }
 
 .filters {
@@ -95,7 +172,7 @@ h1 {
 
 .tag {
   padding: 10px 20px;
-  background-color: yellow;
+  background-color: var(--primary-color);
   border-radius: 20px;
   color: black;
 }

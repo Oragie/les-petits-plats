@@ -1,7 +1,7 @@
-import { Header } from "../src/components/Header.js";
-import { Hero } from "../src/components/Hero.js";
-import { Filter } from "../src/components/Filter.js";
-import { Recipes } from "../src/components/Recipes.js";
+import { Header } from "../components/Header.js";
+import { Hero } from "../components/Hero.js";
+import { Filter } from "../components/Filter.js";
+import { Recipes } from "../components/Recipes.js";
 
 export function templateFactory() {
   const app = document.getElementById("app");
@@ -12,7 +12,7 @@ export function templateFactory() {
 
   // Hero section
   const heroSection = Hero();
-  app.appendChild(heroSection);
+  header.appendChild(heroSection);
 
   // Filters Section
   const filtersSection = Filter();
