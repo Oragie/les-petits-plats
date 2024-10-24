@@ -63,26 +63,36 @@ function createRecipeCard(image, name, time, ingredients, description) {
   const ingredientsContainer = document.createElement("div");
   ingredientsContainer.classList.add("ingredients-container");
 
-  // Liste pour les ingrédients
-  const leftColumn = document.createElement("ul");
-  const rightColumn = document.createElement("ul");
+  // Liste des ingrédients
+  const ingredientsList = document.createElement("ul");
+  ingredientsList.classList.add("ingredients-list");
 
-  // Répartir les ingrédients dans deux colonnes
-  ingredients.forEach((ingredient, index) => {
+  // Parcourir les ingrédients
+  ingredients.forEach((ingredient) => {
     const li = document.createElement("li");
-    const quantity = ingredient.quantity
+
+    // Élément pour l'ingrédient
+    const ingredientName = document.createElement("span");
+    ingredientName.textContent = ingredient.ingredient;
+    ingredientName.classList.add("ingredient-name");
+
+    // Élément pour la quantité
+    const quantity = document.createElement("span");
+    quantity.textContent = ingredient.quantity
       ? `${ingredient.quantity} ${ingredient.unit || ""}`
       : "";
-    li.textContent = `${ingredient.ingredient} ${quantity}`;
+    quantity.classList.add("ingredient-quantity");
 
-    if (index % 2 === 0) {
-      leftColumn.appendChild(li);
-    } else {
-      rightColumn.appendChild(li);
-    }
+    // Ajouter l'ingrédient et la quantité sous l'ingrédient dans la même colonne
+    li.appendChild(ingredientName);
+    li.appendChild(quantity);
+
+    // Ajouter chaque ingrédient à la liste
+    ingredientsList.appendChild(li);
   });
 
-  ingredientsContainer.append(leftColumn, rightColumn);
+  // Ajouter la liste au container
+  ingredientsContainer.appendChild(ingredientsList);
 
   // Ajouter tous les éléments à la carte
   card.append(
