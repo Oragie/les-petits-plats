@@ -1,27 +1,26 @@
 import { api } from "../api/api.js";
 import { addLabel } from "./LabelSearch.js";
 
-// Exemples de modification de la fonction selectOption pour appeler addLabel
-function selectOption(type, option) {
-  addLabel(option, type);
-
-  const tag = createTag(option);
-  const selectedTags = document.querySelector(".selected-tags");
-  selectedTags.appendChild(tag);
-}
-
 // Filters Section
 export function Filter() {
   const filtersSection = document.createElement("div");
   filtersSection.classList.add("filters");
 
+  const recipes = api.getAllRecipes();
+
   // Create Dropdowns
-  const ingredientsFilter = createDropdown(
+  const ingredientsFilter = Dropdown(
     "Ingrédients",
-    getUniqueIngredients()
+    getUniqueTags("ingredients", recipes)
   );
-  const appliancesFilter = createDropdown("Appareils", getUniqueAppliances());
-  const utensilsFilter = createDropdown("Ustensiles", getUniqueUstensils());
+  const appliancesFilter = Dropdown(
+    "Appareils",
+    getUniqueTags("appliances", recipes)
+  );
+  const utensilsFilter = Dropdown(
+    "Ustensiles",
+    getUniqueTags("ustensils", recipes)
+  );
 
   const selectedTags = document.createElement("div");
   selectedTags.classList.add("selected-tags");
@@ -42,7 +41,7 @@ export function Filter() {
   return filtersSection;
 }
 
-function createDropdown(label, options) {
+function Dropdown(label, options) {
   const wrapper = document.createElement("div");
   wrapper.classList.add("dropdown");
 
@@ -94,18 +93,7 @@ function createDropdown(label, options) {
   return wrapper;
 }
 
-function filterList(list, searchTerm) {
-  const items = list.querySelectorAll("li");
-  items.forEach((item) => {
-    if (item.textContent.toLowerCase().includes(searchTerm)) {
-      item.style.display = "";
-    } else {
-      item.style.display = "none";
-    }
-  });
-}
-
-function createTag(text) {
+function Tag(text) {
   const tag = document.createElement("div");
   tag.classList.add("tag");
   tag.textContent = text;
@@ -118,34 +106,53 @@ function createTag(text) {
   return tag;
 }
 
+// Exemples de modification de la fonction selectOption pour appeler addLabel
+function selectOption(type, option) {
+  addLabel(option, type);
+
+  const tag = Tag(option);
+  const selectedTags = document.querySelector(".selected-tags");
+  selectedTags.appendChild(tag);
+}
+
+function filterList(list, searchTerm) {
+  const items = list.querySelectorAll("li");
+  items.forEach((item) => {
+    if (item.textContent.toLowerCase().includes(searchTerm)) {
+      item.style.display = "";
+    } else {
+      item.style.display = "none";
+    }
+  });
+}
+
 // Utility functions to get unique ingredients, appliances, and utensils
-function getUniqueIngredients() {
-  const recipes = api.getAllRecipes();
-  const ingredients = new Set();
-  recipes.forEach((recipe) => {
-    recipe.ingredients.forEach((ingredient) => {
-      ingredients.add(ingredient.ingredient);
-    });
-  });
-  return Array.from(ingredients);
-}
 
-function getUniqueAppliances() {
-  const recipes = api.getAllRecipes();
-  const appliances = new Set();
+function getUniqueTags(type, recipes) {
+  const tags = new Set();
   recipes.forEach((recipe) => {
-    appliances.add(recipe.appliance);
-  });
-  return Array.from(appliances);
-}
+    switch (type) {
+      case "ingredients":
+        recipe.ingredients.forEach((ingredient) => {
+          tags.add(ingredient.ingredient);
+        });
+        break;
 
-function getUniqueUstensils() {
-  const recipes = api.getAllRecipes();
-  const utensils = new Set();
-  recipes.forEach((recipe) => {
-    recipe.ustensils.forEach((ustensil) => {
-      utensils.add(ustensil);
-    });
+      case "appliances":
+        recipes.forEach((recipe) => {
+          tags.add(recipe.appliance);
+        });
+        break;
+
+      case "ustensils":
+        recipe.ustensils.forEach((ustensil) => {
+          tags.add(ustensil);
+        });
+        break;
+
+      default:
+        throw new Error("please provide type");
+    }
   });
-  return Array.from(utensils);
+  return Array.from(tags);
 }
