@@ -52,6 +52,7 @@ function createRecipeCard(image, name, time, ingredients, description) {
   recipeDescTitle.classList.add("recipe-subtitle");
 
   const recipeDesc = document.createElement("p");
+  recipeDesc.title = description;
   recipeDesc.textContent = description;
   recipeDesc.classList.add("recipe-description");
 
@@ -80,7 +81,7 @@ function createRecipeCard(image, name, time, ingredients, description) {
     const quantity = document.createElement("span");
     quantity.textContent = ingredient.quantity
       ? `${ingredient.quantity} ${ingredient.unit || ""}`
-      : "";
+      : "-";
     quantity.classList.add("ingredient-quantity");
 
     // Ajouter l'ingrédient et la quantité sous l'ingrédient dans la même colonne

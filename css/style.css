@@ -1,174 +1,201 @@
 :root {
   font-family: 'Manrope', 'Anton', sans-serif;
   font-weight: 400;
-  /* Définition des polices locales */
-  /* Manrope */
-  @font-face {
-    font-family: 'Manrope';
-    src: url('../assets/fonts/Manrope/static/Manrope-Regular.ttf') format('truetype'),
-        url('../assets/fonts/Manrope/static/Manrope-Bold.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-  }
-
-  /* Anton */
-  @font-face {
-    font-family: 'Anton';
-    src: url('../assets/fonts/Anton/Anton-Regular.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-  }
-
-  /* color variable */
-    --primary-color:  #FFD15B;
-    --secondary-color: #1B1B1B;
-    --black-color:black;
-    --white-color:white;
-    --fadedtext-color: #7A7A7A;
-    --bg-color: #EDEDED;
-
+  --primary-color:  #FFD15B;
+  --secondary-color: #1B1B1B;
+  --black-color: black;
+  --white-color: white;
+  --fadedtext-color: #7A7A7A;
+  --bg-color: #EDEDED;
 }
 
 
-body {
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-  background-color: var(--bg-color);
-  color: white;
-}
-
+/** Header style **/
+/* Header avec largeur de 1440px et hauteur de 667px */
 header {
-  position: relative; 
-  width: 100%;
-  height: 667px; /* Par défaut */
-  background-size: cover;
-  background-position: center;
-  justify-content: center; /* Centre horizontalement */
-  align-items: center; /* Centre verticalement */
+  position: relative;
+  width: 1440px;
+  height: 667px;
+  margin: 0 auto; 
+  overflow-x: hidden; /* Empêche le débordement horizontal */
+  overflow-y: hidden; /* Empêche l'image de déborder en hauteur */
 }
 
-@media (max-width: 1440px) {
-  header {
-    height: 667px; /* Hauteur définie pour une largeur d'écran de 1440px */
-  }
+/* L'image d'en-tête (imgHeader) occupe toute la largeur de l'écran sans compter la barre de défilement */
+.imgHeader {
+  width: 100vw; /* Occupe 100% de la largeur de l'écran */
+  max-width: 100%; /* Empêche de dépasser la largeur visible */
+  height: 100%; /* Limite la hauteur à celle du header */
+  object-fit: cover; /* Assure que l'image reste bien cadrée */
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0; /* L'image est derrière tous les autres éléments */
 }
 
+/* Positionnement fixe du logo en haut à gauche du header */
 .logo {
-  position: absolute; /* Pour placer le titre en haut à gauche */
-  top: 50px;
-  left: 70px;
-  width: 200px;
-  height: 25px;
-  font-size: 1.5em; 
-  line-height: 1.1;
-  color: var(--primary-color); 
+  position: absolute;
+  top: 20px; /* Distance par rapport au haut du header */
+  left: 20px; /* Distance par rapport à la gauche du header */
+  width: 200px; /* Taille initiale du logo */
+  z-index: 1; /* Le logo doit être au-dessus de l'image */
+  display: block; /* S'assurer que le logo est un bloc pour bien gérer sa taille */
 }
 
+
+/* Hero styles */
 .hero {
-  position : absolute;
-  top: 200px;
-  right: 10%;
-  left:10%;
-  text-align: center;
-  padding: 60px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  
   color: var(--primary-color);
-}
-
-.hero-text {
-  max-width: 65%; /* Limite la largeur pour que le texte ne s'étende pas trop */
-  margin: 0 auto; /* Centre le conteneur de texte */
+  padding: 0 20px;
 }
 
 .hero h2 {
-  font-size: 2em; /* Ajuste la taille de la police */
-  line-height: 1.2; /* Espace entre les lignes */
-  margin: 0; /* Supprime les marges par défaut */
-  overflow-wrap: break-word; /* Permet le passage à la ligne */
+  font-size: 2.5rem;
+  line-height: 1.5;
+  margin-bottom: 20px;
+  overflow-wrap: break-word;
 }
 
-/* Conteneur de la barre de recherche */
+
+/* Barre de recherche */
 .search-container {
   position: relative;
-  display: inline-block;
+  display: flex;
+  justify-content: center;
+  width: 954px;
+  margin-top: 20px;
 }
 
 .search-container input {
-  width: 954px;
-  height: 45px;
-  padding: 20px;
-  padding-right: 60px; /* Réserver de la place pour le bouton */
-  font-size: 1.2em;
-  background:var(--bg-color);
-  border: none;
-  margin-top: 1.2rem;
+  width: 80%;
+  max-width: 900px;
+  height: 50px;
+  padding: 10px 20px;
+  font-size: 1.1rem;
   border-radius: 8px;
+  border: 1px solid #ccc;
   color: var(--secondary-color);
+  background-color: var(--white-color);
 }
 
 .search-container input:focus {
   outline: none;
+  border-color: var(--primary-color);
 }
 
-/** Bouton de recherche **/
+/* Bouton de recherche */
 .search-button {
   position: absolute;
-  top: 56%;
   right: 10px;
+  top: 50%;
   transform: translateY(-50%);
-  width: 4rem;
-  height: 4rem;
-  background: var(--secondary-color);
+  width: 50px;
+  height: 50px;
+  background-color: var(--primary-color);
   border: none;
+  border-radius: 50%;
   cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10001;
 }
 
 .search-button img {
-  width: 100%;
-  height: auto;
+  width: 24px;
+  height: 24px;
 }
 
-/* Hover et animations */
 .search-button:hover {
-  background: #ffd15b;
-  transition: background-color ease-out 300ms;
-}
+  background-color: var(--secondary-color);
+  transition: background-color 0.3s ease;
+} 
 
-.search-button:active {
-  width: 51px;
-  height: 52px;
-  transition: all ease-out 300ms;
-  opacity: 0;
-}
 
-.search-button:active img {
-  opacity: 0;
-}
-
+/** Filter style**/
 .filters {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin: 20px 0;
+  background-color: var(--bg-color);
+  margin: auto;
 }
 
-.filters select {
-  padding: 12px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  background-color: #f9f9f9;
-  color: #333;
+/* DropDown styles */
+.dropdown {
+  position: relative;
+  display: inline-block;
+  width: 200px;
+  padding: 1rem;
+top: 1rem;
+left: 1rem;
+padding: 17px 16px 17px 16px;
+gap: 63px;
+border-radius: 10px;
+background-color: var(--white-color);
+
 }
+
+.dropdown-label {
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.dropdown-input {
+  display: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.dropdown-list {
+  display: none;
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ccc;
+  max-height: 150px;
+  overflow-y: auto;
+  width: 100%;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  z-index: 1;
+}
+
+.dropdown-list li {
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.dropdown-list li:hover {
+  background-color: #f0f0f0;
+}
+
 
 .tag {
-  padding: 10px 20px;
+  display: inline-flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
   background-color: var(--primary-color);
-  border-radius: 20px;
-  color: black;
+  border-radius: 10px;
+  width: 150px;
+
+  margin-left: 10px;
+  margin-top:2rem ;
+  font-size: 1rem;
+  font-family: 'Manrope';
+  padding: 1rem;
 }
+
+.recipe-count {
+  font-size: 16px;
+  font-weight: bold;
+}
+
 
 /** Card styles **/
 /** Main recipes container **/
@@ -309,48 +336,3 @@ header {
 
 }
 
-
-
-/* Boutons */
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #646cff;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-button:hover {
-  background-color: #535bf2;
-}
-
-/* Mode clair */
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-
-  body {
-    background-color: #f8f8f8;
-    color: #333;
-  }
-
-  .hero input {
-    background-color: #fff;
-    color: #333;
-  }
-
-  .hero button {
-    background-color: #646cff;
-  }
-
-  button {
-    background-color: #f9f9f9;
-    color: #333;
-  }
-}

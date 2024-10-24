@@ -5,6 +5,7 @@ export function Header() {
   const imgHeader = document.createElement("img");
   imgHeader.src = "assets/templates/header.png";
   imgHeader.alt = "image d'un plat";
+  imgHeader.classList.add("imgHeader");
   header.appendChild(imgHeader);
 
   const logo = document.createElement("img");

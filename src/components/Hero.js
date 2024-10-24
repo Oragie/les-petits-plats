@@ -1,5 +1,3 @@
-// Hero section
-
 export function Hero() {
   const heroSection = document.createElement("section");
   heroSection.classList.add("hero");
@@ -23,14 +21,17 @@ export function Hero() {
 
   const searchButton = document.createElement("button");
   searchButton.classList.add("search-button");
+
+  // Ajout de l'icône de recherche ici
   const searchIcon = document.createElement("img");
-  searchIcon.src = ""; // Icone de recherche
+  searchIcon.src = "../../assets/icons/loupe_noire.svg"; // Chemin vers l'icône de recherche
+  searchIcon.alt = "Search Icon";
 
   heroSection.appendChild(textContainer);
   textContainer.appendChild(heroText);
   heroSection.appendChild(searchContainer);
   searchContainer.appendChild(searchBar);
-  searchContainer.appendChild(searchButton);
+  searchBar.appendChild(searchButton);
   searchButton.appendChild(searchIcon);
 
   return heroSection;
