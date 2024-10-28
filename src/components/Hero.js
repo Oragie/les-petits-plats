@@ -15,6 +15,7 @@ export function Hero() {
     "placeholder",
     "Rechercher une recette, un ingrédient, ..."
   );
+  searchBar.classList.add("search-bar");
 
   const searchButton = document.createElement("button");
   searchButton.classList.add("search-button");
@@ -23,12 +24,13 @@ export function Hero() {
   const searchIcon = document.createElement("img");
   searchIcon.src = "../../assets/icons/loupe_noire.svg"; // Chemin vers l'icône de recherche
   searchIcon.alt = "Search Icon";
+  searchButton.appendChild(searchIcon);
 
+  // Ajout des éléments à la section `hero`
   heroSection.appendChild(heroText);
   heroSection.appendChild(searchContainer);
   searchContainer.appendChild(searchBar);
-  searchBar.appendChild(searchButton);
-  searchButton.appendChild(searchIcon);
+  searchContainer.appendChild(searchButton);
 
   return heroSection;
 }
