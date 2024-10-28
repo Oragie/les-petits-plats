@@ -1,45 +1,57 @@
 :root {
-  font-family: 'Manrope', 'Anton', sans-serif;
   font-weight: 400;
-  --primary-color:  #FFD15B;
-  --secondary-color: #1B1B1B;
-  --black-color: black;
-  --white-color: white;
-  --fadedtext-color: #7A7A7A;
-  --bg-color: #EDEDED;
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* color variable */
+    --primary-color:  #FFD15B;
+    --secondary-color: #1B1B1B;
+    --black-color:black;
+    --fadedtext-color: #7A7A7A;
+    --bg-color: #EDEDED;
+
+}
+
+html {
+  --res: calc(0.01 * 10vmin);
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background-color: var(--bg-color);
 }
 
 
 /** Header style **/
-/* Header avec largeur de 1440px et hauteur de 667px */
-header {
-  position: relative;
-  width: 1440px;
-  height: 667px;
-  margin: 0 auto; 
-  overflow-x: hidden; /* Empêche le débordement horizontal */
-  overflow-y: hidden; /* Empêche l'image de déborder en hauteur */
+header{
+  width: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 /* L'image d'en-tête (imgHeader) occupe toute la largeur de l'écran sans compter la barre de défilement */
 .imgHeader {
-  width: 100vw; /* Occupe 100% de la largeur de l'écran */
-  max-width: 100%; /* Empêche de dépasser la largeur visible */
+  position: relative;
+  width: 100%; /* Occupe 100% de la largeur de l'écran */
   height: 100%; /* Limite la hauteur à celle du header */
   object-fit: cover; /* Assure que l'image reste bien cadrée */
-  position: absolute;
-  top: 0;
-  left: 0;
   z-index: 0; /* L'image est derrière tous les autres éléments */
 }
 
 /* Positionnement fixe du logo en haut à gauche du header */
 .logo {
   position: absolute;
-  top: 20px; /* Distance par rapport au haut du header */
-  left: 20px; /* Distance par rapport à la gauche du header */
-  width: 200px; /* Taille initiale du logo */
-  z-index: 1; /* Le logo doit être au-dessus de l'image */
+  top: 5%; /* Distance par rapport au haut du header */
+  left: 5%; /* Distance par rapport à la gauche du header */
+  width: 18vw; /* Taille initiale du logo */
+  z-index: 1000; /* Le logo doit être au-dessus de l'image */
   display: block; /* S'assurer que le logo est un bloc pour bien gérer sa taille */
 }
 
@@ -47,76 +59,32 @@ header {
 /* Hero styles */
 .hero {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 90%;
-  
+  top: 10vw;
+  width: 100%;
   color: var(--primary-color);
-  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
+/* Titre H2 responsive */
 .hero h2 {
-  font-size: 2.5rem;
-  line-height: 1.5;
-  margin-bottom: 20px;
-  overflow-wrap: break-word;
+  width: 48%;
+  font-family: "Anton";
+  font-size: clamp(14px, 3vw, 44px);
+  line-height: 1.2;
+  padding: 0.5rem;
+  text-align: center;
 }
-
 
 /* Barre de recherche */
 .search-container {
-  position: relative;
   display: flex;
   justify-content: center;
-  width: 954px;
-  margin-top: 20px;
+  width: 100%;
 }
 
-.search-container input {
-  width: 80%;
-  max-width: 900px;
-  height: 50px;
-  padding: 10px 20px;
-  font-size: 1.1rem;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  color: var(--secondary-color);
-  background-color: var(--white-color);
-}
-
-.search-container input:focus {
-  outline: none;
-  border-color: var(--primary-color);
-}
-
-/* Bouton de recherche */
-.search-button {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 50px;
-  height: 50px;
-  background-color: var(--primary-color);
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 10001;
-}
-
-.search-button img {
-  width: 24px;
-  height: 24px;
-}
-
-.search-button:hover {
-  background-color: var(--secondary-color);
-  transition: background-color 0.3s ease;
-} 
 
 
 /** Filter style**/

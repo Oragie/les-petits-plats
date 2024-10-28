@@ -2,9 +2,6 @@ export function Hero() {
   const heroSection = document.createElement("section");
   heroSection.classList.add("hero");
 
-  const textContainer = document.createElement("div");
-  textContainer.classList.add("hero-text");
-
   const heroText = document.createElement("h2");
   heroText.textContent =
     "CHERCHEZ PARMI PLUS DE 1500 RECETTES DU QUOTIDIEN, SIMPLES ET DÉLICIEUSES";
@@ -27,8 +24,7 @@ export function Hero() {
   searchIcon.src = "../../assets/icons/loupe_noire.svg"; // Chemin vers l'icône de recherche
   searchIcon.alt = "Search Icon";
 
-  heroSection.appendChild(textContainer);
-  textContainer.appendChild(heroText);
+  heroSection.appendChild(heroText);
   heroSection.appendChild(searchContainer);
   searchContainer.appendChild(searchBar);
   searchBar.appendChild(searchButton);
