@@ -6,6 +6,12 @@ export function Filter() {
   const filtersSection = document.createElement("div");
   filtersSection.classList.add("filters");
 
+  const recipeControls = document.createElement("section");
+  recipeControls.classList.add("recipes-controls");
+
+  const filtersBox = document.createElement("div");
+  filtersBox.classList.add("filters-box");
+
   const recipes = api.getAllRecipes();
 
   // Create Dropdowns
@@ -22,21 +28,23 @@ export function Filter() {
     getUniqueTags("ustensils", recipes)
   );
 
-  const selectedTags = document.createElement("div");
-  selectedTags.classList.add("selected-tags");
-
-  filtersSection.append(
-    ingredientsFilter,
-    appliancesFilter,
-    utensilsFilter,
-    selectedTags
-  );
-
   // Add Recipe Count
   const recipeCount = document.createElement("span");
   recipeCount.classList.add("recipe-count");
   recipeCount.textContent = `${api.getAllRecipes().length} recettes`;
-  filtersSection.appendChild(recipeCount);
+
+  //add Tag box
+  const tagBox = document.createElement("section");
+  tagBox.classList.add("tag-box");
+
+  const selectedTags = document.createElement("section");
+  selectedTags.classList.add("selected-tags");
+
+  filtersSection.append(recipeControls, tagBox);
+
+  recipeControls.append(filtersBox, recipeCount);
+
+  filtersBox.append(ingredientsFilter, appliancesFilter, utensilsFilter);
 
   return filtersSection;
 }
