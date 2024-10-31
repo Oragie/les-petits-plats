@@ -1,7 +1,7 @@
 import { api } from "../api/api.js";
 import { addLabel } from "./LabelSearch.js";
+import { filterList } from "../utils/filterLogic.js"; // Importe la logique de filtrage
 
-// Filters Section
 export function Filter() {
   const filtersSection = document.createElement("div");
   filtersSection.classList.add("filters");
@@ -14,7 +14,6 @@ export function Filter() {
 
   const recipes = api.getAllRecipes();
 
-  // Create Dropdowns
   const ingredientsFilter = Dropdown(
     "Ingrédients",
     getUniqueTags("ingredients", recipes)
@@ -28,12 +27,10 @@ export function Filter() {
     getUniqueTags("ustensils", recipes)
   );
 
-  // Add Recipe Count
   const recipeCount = document.createElement("span");
   recipeCount.classList.add("recipe-count");
   recipeCount.textContent = `${api.getAllRecipes().length} recettes`;
 
-  //add Tag box
   const tagBox = document.createElement("section");
   tagBox.classList.add("tag-box");
 
@@ -41,9 +38,7 @@ export function Filter() {
   selectedTags.classList.add("selected-tags");
 
   filtersSection.append(recipeControls, tagBox);
-
   recipeControls.append(filtersBox, recipeCount);
-
   filtersBox.append(ingredientsFilter, appliancesFilter, utensilsFilter);
 
   return filtersSection;
@@ -55,52 +50,83 @@ function Dropdown(label, options) {
 
   const dropdownLabel = document.createElement("span");
   dropdownLabel.textContent = label;
-  dropdownLabel.classList.add("dropdown-label"); // Ajoutez une classe pour le style
+  dropdownLabel.classList.add("dropdown-label");
   wrapper.appendChild(dropdownLabel);
+
+  const inputContainer = document.createElement("div");
+  inputContainer.classList.add("dropdown-input-container");
 
   const input = document.createElement("input");
   input.type = "text";
   input.placeholder = `Rechercher ${label.toLowerCase()}`;
-  input.classList.add("dropdown-input"); // Ajoutez une classe pour styliser le champ de recherche
-  input.style.display = "none"; // Cachez le champ de recherche initialement
-  wrapper.appendChild(input);
+  input.classList.add("dropdown-input");
+
+  const clearButton = document.createElement("button");
+  clearButton.classList.add("clear-button");
+  clearButton.textContent = "✕"; // Bouton pour vider la recherche
+
+  inputContainer.appendChild(input);
+  inputContainer.appendChild(clearButton);
+  wrapper.appendChild(inputContainer);
 
   const list = document.createElement("ul");
   list.classList.add("dropdown-list");
-  list.style.display = "none"; // Cachez la liste initialement
 
-  // Populate dropdown options
   options.forEach((option) => {
     const li = document.createElement("li");
     li.textContent = option;
     li.addEventListener("click", () => {
       selectOption(label, option);
-      // Fermer le dropdown après sélection
-      list.style.display = "none";
-      input.style.display = "none";
+      closeDropdown(); // Ferme le dropdown après sélection
     });
     list.appendChild(li);
   });
 
   wrapper.appendChild(list);
 
-  // Toggle dropdown when clicking the label
-  dropdownLabel.addEventListener("click", () => {
+  function toggleDropdown() {
     const isVisible = list.style.display === "block";
     list.style.display = isVisible ? "none" : "block";
-    input.style.display = isVisible ? "none" : "block"; // Affiche ou cache le champ de recherche
-    input.focus(); // Mets le focus sur l'input lors de l'ouverture
-  });
+    input.style.display = isVisible ? "none" : "block";
+    input.focus();
+  }
 
-  // Handle search/filtering
+  function closeDropdown() {
+    list.style.display = "none";
+    input.style.display = "none";
+    input.value = ""; // Réinitialise l'input
+  }
+
+  wrapper.addEventListener("click", toggleDropdown); // Rend tout le dropdown cliquable
+
   input.addEventListener("input", (e) => {
     const searchTerm = e.target.value.toLowerCase();
-    filterList(list, searchTerm);
+    filterList(list, searchTerm); // Utilise le filtre importé
+  });
+
+  clearButton.addEventListener("click", () => {
+    input.value = "";
+    filterList(list, "");
+    input.focus();
+  });
+
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeDropdown();
+    if (e.key === "Enter") {
+      const firstVisibleItem = list.querySelector(
+        "li:not([style*='display: none'])"
+      );
+      if (firstVisibleItem) {
+        selectOption(label, firstVisibleItem.textContent);
+        closeDropdown();
+      }
+    }
   });
 
   return wrapper;
 }
 
+// Fonction pour créer un élément de tag
 function Tag(text) {
   const tag = document.createElement("div");
   tag.classList.add("tag");
@@ -108,33 +134,21 @@ function Tag(text) {
 
   const removeBtn = document.createElement("button");
   removeBtn.textContent = "x";
-  removeBtn.addEventListener("click", () => tag.remove());
+  removeBtn.classList.add("remove-tag");
+  removeBtn.addEventListener("click", () => {
+    tag.remove(); // Supprime le tag du DOM
+  });
 
   tag.appendChild(removeBtn);
   return tag;
 }
 
-// Exemples de modification de la fonction selectOption pour appeler addLabel
 function selectOption(type, option) {
   addLabel(option, type);
-
   const tag = Tag(option);
   const selectedTags = document.querySelector(".selected-tags");
   selectedTags.appendChild(tag);
 }
-
-function filterList(list, searchTerm) {
-  const items = list.querySelectorAll("li");
-  items.forEach((item) => {
-    if (item.textContent.toLowerCase().includes(searchTerm)) {
-      item.style.display = "";
-    } else {
-      item.style.display = "none";
-    }
-  });
-}
-
-// Utility functions to get unique ingredients, appliances, and utensils
 
 function getUniqueTags(type, recipes) {
   const tags = new Set();
@@ -145,21 +159,14 @@ function getUniqueTags(type, recipes) {
           tags.add(ingredient.ingredient);
         });
         break;
-
       case "appliances":
-        recipes.forEach((recipe) => {
-          tags.add(recipe.appliance);
-        });
+        tags.add(recipe.appliance);
         break;
-
       case "ustensils":
         recipe.ustensils.forEach((ustensil) => {
           tags.add(ustensil);
         });
         break;
-
-      default:
-        throw new Error("please provide type");
     }
   });
   return Array.from(tags);

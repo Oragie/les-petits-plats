@@ -173,7 +173,7 @@ header{
 }
 
 
-/** Filter style**/
+/* Filter Styles */
 .filters {
   display: flex;
   flex-direction: column;
@@ -183,14 +183,13 @@ header{
   max-width: 1440px;
 }
 
-.recipes-controls{
+.recipes-controls {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   padding: 2vw;
 }
 
-/* Conteneur principal des filtres */
 .filters-box {
   display: flex;
   flex-direction: row;
@@ -202,11 +201,11 @@ header{
 
 /* Styles pour chaque dropdown */
 .dropdown {
+  position: relative;
   display: flex;
-  align-items: center;
-  justify-content: space-between; /* Espace entre le texte et l'icône */
-  width: 140px; /* Largeur uniforme pour chaque dropdown */
-  padding: 1rem 1rem; /* Padding pour plus d'espace autour du texte */
+  flex-direction: column;
+  width: 180px;
+  padding: 1rem;
   border-radius: var(--border-radius);
   border: 1px solid var(--bg-color);
   background-color: var(--white-color);
@@ -215,13 +214,12 @@ header{
   font-size: 1rem;
   font-weight: 400;
   cursor: pointer;
-  position: relative;
   box-shadow: 0px 4px 34px 30px #0000000A;
 }
 
 /* Icône de flèche vers le bas */
 .dropdown::after {
-  content: "▼"; /* Remplace par une icône SVG ou une image si besoin */
+  content: "▼";
   font-size: 0.8rem;
   color: var(--secondary-color);
   position: absolute;
@@ -229,23 +227,47 @@ header{
 }
 
 .dropdown-label {
-  cursor: pointer;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+/* Conteneur de la barre de recherche */
+.dropdown-input-container {
+  display: flex;
+  align-items: center;
+  background-color: #f9f9f9;
+  padding: 5px;
+  border-radius: var(--border-radius);
 }
 
 .dropdown-input {
-  display: none;
   width: 100%;
-  box-sizing: border-box;
+  border: none;
+  outline: none;
+  font-size: 0.9rem;
 }
 
+/* Bouton pour vider le champ de recherche */
+.clear-button {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  color: var(--secondary-color);
+  cursor: pointer;
+  display: none; /* Affiché seulement si du texte est saisi */
+}
+
+/* Liste déroulante */
 .dropdown-list {
   display: none;
   position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  max-height: 150px;
   background-color: white;
   border: 1px solid #ccc;
-  max-height: 150px;
   overflow-y: auto;
-  width: 100%;
   list-style: none;
   padding: 0;
   margin: 0;
@@ -258,36 +280,17 @@ header{
 }
 
 .dropdown-list li:hover {
-  background-color: #f0f0f0;
-}
-
-.recipe-count{
-  font-family: "Anton";
-  font-synthesis: none;
-  font-size: 2rem;
-  color: var(--secondary-color);
-}
-
-.tag {
-  display: inline-flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
   background-color: var(--primary-color);
-  border-radius: var(--border-radius);
-  width: 150px;
-
-  margin-left: 10px;
-  margin-top:2rem ;
-  font-size: 1rem;
-  font-family: 'Manrope';
-  padding: 1rem;
+  color: white;
 }
 
 .recipe-count {
-  font-size: 16px;
-  font-weight: bold;
+  font-family: "Anton";
+  font-synthesis: none;
+  font-size: 1.5rem;
+  color: var(--secondary-color);
 }
+
 
 
 /** Card styles **/
