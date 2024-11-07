@@ -53,6 +53,7 @@ export function Hero(recipes, setRecipes) {
 
   // Event listener pour le bouton de recherche
   function validateInput() {
+    const recipeCountElement = document.querySelector(".recipe-count");
     const inputText = searchBar.value.trim();
     if (inputText.length >= 3) {
       const keySearch = createKeySearch(inputText); // Appel de la fonction dans utils
@@ -62,6 +63,9 @@ export function Hero(recipes, setRecipes) {
         searchBar.classList.remove("error-border"); // Retire la bordure rouge si pas d'erreur
         const filteredRecipes = filterRecipesByInput(keySearch, setRecipes); // Récupère les recettes filtrées
         updateRecipes(filteredRecipes); // Met à jour l'affichage des recettes avec les nouvelles recettes
+        if (recipeCountElement) {
+          recipeCountElement.textContent = `${filteredRecipes.length} recettes`; // Mettre à jour le compteur
+        }
       }
     } else {
       errorMessage.textContent = "Veuillez entrer au moins 3 caractères.";
@@ -72,11 +76,13 @@ export function Hero(recipes, setRecipes) {
 
   // Fonction pour réinitialiser complètement la saisie
   function clearSearch() {
+    const recipeCountElement = document.querySelector(".recipe-count");
     searchBar.value = ""; // Vide le champ de recherche
     searchBar.classList.remove("error-border"); // Retire la bordure d'erreur
     errorMessage.style.display = "none"; // Cache le message d'erreur
     searchBar.focus(); // Remet le focus sur l'input
     updateRecipes(recipes); // Réinitialise l'affichage des recettes avec l'API complète
+    recipeCountElement.textContent = `${setRecipes.length} recettes`; // Réinitialiser le compteur
   }
 
   searchBar.addEventListener("input", validateInput);

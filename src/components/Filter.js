@@ -1,7 +1,8 @@
 import { addLabel } from "./LabelSearch.js";
-import { filterList } from "../modules/recipes.js"; // Importe la logique de filtrage
+import { filterList, filterRecipesByInput } from "../modules/recipes.js"; // Importe la logique de filtrage
+import { updateRecipes } from "../components/Recipes.js";
 
-export function Filter(recipes) {
+export function Filter(recipes, setRecipes) {
   const filtersSection = document.createElement("div");
   filtersSection.classList.add("filters");
 
@@ -24,9 +25,10 @@ export function Filter(recipes) {
     getUniqueTags("ustensils", recipes)
   );
 
+  // Crée un élément pour afficher le nombre de recettes
   const recipeCount = document.createElement("span");
   recipeCount.classList.add("recipe-count");
-  recipeCount.textContent = `${recipes.length} recettes`;
+  recipeCount.textContent = `${recipes.length} recettes`; // Initialiser le compteur
 
   const tagBox = document.createElement("section");
   tagBox.classList.add("tag-box");
@@ -37,6 +39,24 @@ export function Filter(recipes) {
   filtersSection.append(recipeControls, tagBox);
   recipeControls.append(filtersBox, recipeCount);
   filtersBox.append(ingredientsFilter, appliancesFilter, utensilsFilter);
+
+  // Fonction pour mettre à jour le compteur de recettes directement dans le DOM
+  function updateRecipeCount(filteredRecipes) {
+    recipeCount.textContent = `${filteredRecipes.length} recettes`; // Met à jour le compteur
+  }
+
+  // Utilisez `updateRecipeCount` chaque fois que les recettes sont filtrées
+  function applyFilters(keySearch) {
+    const filteredRecipes = filterRecipesByInput(keySearch, setRecipes);
+    updateRecipes(filteredRecipes);
+    updateRecipeCount(filteredRecipes);
+  }
+
+  function resetFilters() {
+    // Code pour effacer tous les filtres...
+    updateRecipes(setRecipes); // Réinitialise l'affichage avec `setRecipes`
+    updateRecipeCount(setRecipes); // Met à jour le compteur avec le total
+  }
 
   return filtersSection;
 }
