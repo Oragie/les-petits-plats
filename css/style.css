@@ -173,6 +173,9 @@ header{
 }
 
 
+/** Filter section **/
+/** -------------------------------------- **/
+
 /* Filter Styles */
 .filters {
   display: flex;
@@ -187,7 +190,7 @@ header{
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  padding: 2vw;
+  padding: 1.5vw 1.5vw 1.5vw 2vw;
 }
 
 .filters-box {
@@ -204,6 +207,7 @@ header{
   position: relative;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   width: 180px;
   padding: 1rem;
   border-radius: var(--border-radius);
@@ -224,37 +228,74 @@ header{
   color: var(--secondary-color);
   position: absolute;
   right: 1rem;
+  transition: transform 0.2s;
+}
+
+/* Flèche vers le haut quand le dropdown est actif */
+.dropdown.active::after {
+  content: "▲"; /* Change la flèche vers le haut */
+}
+
+/* Radius ajusté quand le dropdown est ouvert */
+.dropdown.active {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
 }
 
 .dropdown-label {
-  margin-bottom: 0.5rem;
-  font-weight: bold;
+  font-weight: 500;
 }
 
 /* Conteneur de la barre de recherche */
 .dropdown-input-container {
+  position: sticky; /* Rend le conteneur de l'input "collant" */
+  top: 0; /* Fixe le conteneur en haut du dropdown */
+  width: 100%; /* S'assure que le conteneur prend toute la largeur du dropdown */
+  padding: 1rem;
+  box-sizing: border-box; /* Inclut le padding dans la largeur totale */
   display: flex;
-  align-items: center;
-  background-color: #f9f9f9;
-  padding: 5px;
-  border-radius: var(--border-radius);
+  justify-content: center;
+  
 }
 
 .dropdown-input {
-  width: 100%;
-  border: none;
-  outline: none;
-  font-size: 0.9rem;
+  position: relative;
+  width: 100%; /* Ajuste la largeur de l'input au conteneur */
+  max-width: 90%; /* Limite la largeur pour éviter le débordement */
+  border: 1px solid var(--fadedtext-color); /* Bordure grise */
+  color: var(--secondary-color); /* Couleur du texte */
+  background-color: var(--white-color); /* Fond blanc */
+  padding: 0.5rem; /* Ajoute un peu de padding */
+  border-radius: 4px; /* Arrondit légèrement les coins */
+  font-size: 1rem; /* Taille du texte */
+  outline: none; /* Supprime la bordure par défaut au focus */
 }
 
 /* Bouton pour vider le champ de recherche */
 .clear-button {
+  position: absolute;
+  right: 18%;
+  top: 36%;
   background: none;
   border: none;
-  font-size: 1rem;
-  color: var(--secondary-color);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--fadedtext-color);
   cursor: pointer;
-  display: none; /* Affiché seulement si du texte est saisi */
+  display: none; /* Masqué par défaut */
+}
+
+/* Bouton de recherche */
+.trigger-search-button {
+  position: absolute;
+  right: 11%;
+  top: 40%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
 }
 
 /* Liste déroulante */
@@ -264,14 +305,21 @@ header{
   top: 100%;
   left: 0;
   width: 100%;
-  max-height: 150px;
+  max-height: 324px;
   background-color: white;
-  border: 1px solid #ccc;
-  overflow-y: auto;
+  border: none;
+  overflow-y: scroll; /* Active le défilement */
+  scrollbar-width: none; 
   list-style: none;
   padding: 0;
   margin: 0;
+  border-radius: 0 0 var(--border-radius) var(--border-radius);
   z-index: 1;
+}
+
+/* Masque la scrollbar dans les navigateurs basés sur Webkit (Chrome, Safari, etc.) */
+.dropdown-list::-webkit-scrollbar {
+  display: none;
 }
 
 .dropdown-list li {
@@ -291,6 +339,44 @@ header{
   color: var(--secondary-color);
 }
 
+/* Conteneur pour les tags */
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem; /* Espace entre les tags */
+  padding-left: 2vw;
+}
+
+/* Style pour chaque tag */
+.tag {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 10vw;
+  padding: 1rem;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--bg-color);
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
+  font-family: "Manrope";
+  font-size: 1rem;
+  font-weight: 400;
+  cursor: pointer;
+  box-shadow: 0px 4px 34px 30px #0000000A;
+  position: relative;
+
+}
+
+/* Bouton de suppression à l'intérieur du tag */
+.remove-tag {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--secondary-color);
+  cursor: pointer;
+  margin-left: 0.5rem;
+}
 
 
 /** Card styles **/

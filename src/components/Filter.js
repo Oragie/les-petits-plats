@@ -30,13 +30,10 @@ export function Filter(recipes, setRecipes) {
   recipeCount.classList.add("recipe-count");
   recipeCount.textContent = `${recipes.length} recettes`; // Initialiser le compteur
 
-  const tagBox = document.createElement("section");
-  tagBox.classList.add("tag-box");
+  const tagList = document.createElement("div");
+  tagList.classList.add("tag-list");
 
-  const selectedTags = document.createElement("section");
-  selectedTags.classList.add("selected-tags");
-
-  filtersSection.append(recipeControls, tagBox);
+  filtersSection.append(recipeControls, tagList);
   recipeControls.append(filtersBox, recipeCount);
   filtersBox.append(ingredientsFilter, appliancesFilter, utensilsFilter);
 
@@ -70,101 +67,108 @@ function Dropdown(label, options) {
   dropdownLabel.classList.add("dropdown-label");
   wrapper.appendChild(dropdownLabel);
 
+  // Conteneur de la liste déroulante
+  const list = document.createElement("ul");
+  list.classList.add("dropdown-list");
+
+  // Crée l'input de recherche, caché par défaut
   const inputContainer = document.createElement("div");
   inputContainer.classList.add("dropdown-input-container");
 
-  const input = document.createElement("input");
-  input.type = "text";
-  input.placeholder = `Rechercher ${label.toLowerCase()}`;
-  input.classList.add("dropdown-input");
+  const inputField = document.createElement("input");
+  inputField.type = "text";
+  inputField.classList.add("dropdown-input");
+  inputField.style.display = "none"; // Masqué par défaut
+  inputContainer.appendChild(inputField);
+  list.appendChild(inputContainer);
 
-  const clearButton = document.createElement("button");
-  clearButton.classList.add("clear-button");
-  clearButton.textContent = "✕"; // Bouton pour vider la recherche
+  // Crée un bouton de nettoyage pour l'input de recherche
+  const clearSearchButton = document.createElement("button");
+  clearSearchButton.classList.add("clear-button");
+  clearSearchButton.textContent = "✕"; // Bouton pour vider la recherche
 
-  inputContainer.appendChild(input);
-  inputContainer.appendChild(clearButton);
-  wrapper.appendChild(inputContainer);
+  // Masquer le bouton de nettoyage tant que le menu n'est pas ouvert
+  clearSearchButton.style.display = "none";
+  inputField.parentNode.insertBefore(clearSearchButton, inputField.nextSibling);
 
-  const list = document.createElement("ul");
-  list.classList.add("dropdown-list");
+  const triggerSearchButton = document.createElement("button");
+  triggerSearchButton.classList.add("trigger-search-button");
+
+  const triggerSearchIcon = document.createElement("img");
+  triggerSearchIcon.src = "../../assets/icons/loupe_mini.svg";
+  triggerSearchIcon.alt = "Search Icon";
+  triggerSearchButton.appendChild(triggerSearchIcon);
 
   options.forEach((option) => {
     const li = document.createElement("li");
     li.textContent = option;
     li.addEventListener("click", () => {
-      selectOption(label, option);
+      addTag(option); // Appel à la fonction pour ajouter un tag
       closeDropdown(); // Ferme le dropdown après sélection
     });
     list.appendChild(li);
   });
 
+  inputContainer.appendChild(inputField);
+  inputContainer.appendChild(clearSearchButton);
+  inputContainer.appendChild(triggerSearchButton);
   wrapper.appendChild(list);
 
+  // Fonction pour ouvrir/fermer le dropdown
   function toggleDropdown() {
     const isVisible = list.style.display === "block";
     list.style.display = isVisible ? "none" : "block";
-    input.style.display = isVisible ? "none" : "block";
-    input.focus();
+    inputField.style.display = isVisible ? "none" : "block"; // Affiche ou masque l'input de recherche
+    clearSearchButton.style.display = isVisible ? "none" : "inline"; // Affiche ou masque le bouton de nettoyage
+    inputField.focus(); // Ajouter ou retirer la classe active pour la flèche et le radius
+    if (isVisible) {
+      wrapper.classList.remove("active");
+    } else {
+      wrapper.classList.add("active");
+    }
+
+    inputField.focus();
   }
 
   function closeDropdown() {
     list.style.display = "none";
-    input.style.display = "none";
-    input.value = ""; // Réinitialise l'input
+    inputField.style.display = "none";
+    clearSearchButton.style.display = "none";
+    wrapper.classList.remove("active"); // Retire la classe active lors de la fermeture
+    inputField.value = "";
   }
 
   wrapper.addEventListener("click", toggleDropdown); // Rend tout le dropdown cliquable
 
-  input.addEventListener("input", (e) => {
+  inputField.addEventListener("input", (e) => {
     const searchTerm = e.target.value.toLowerCase();
     filterList(list, searchTerm); // Utilise le filtre importé
   });
 
-  clearButton.addEventListener("click", () => {
-    input.value = "";
+  clearSearchButton.addEventListener("click", () => {
+    inputField.value = "";
     filterList(list, "");
-    input.focus();
-  });
-
-  input.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closeDropdown();
-    if (e.key === "Enter") {
-      const firstVisibleItem = list.querySelector(
-        "li:not([style*='display: none'])"
-      );
-      if (firstVisibleItem) {
-        selectOption(label, firstVisibleItem.textContent);
-        closeDropdown();
-      }
-    }
+    inputField.focus();
   });
 
   return wrapper;
 }
 
-// Fonction pour créer un élément de tag
-function Tag(text) {
+// Fonction pour ajouter un tag dans tagList
+function addTag(tagText) {
   const tag = document.createElement("div");
   tag.classList.add("tag");
-  tag.textContent = text;
+  tag.textContent = tagText;
 
-  const removeBtn = document.createElement("button");
-  removeBtn.textContent = "x";
-  removeBtn.classList.add("remove-tag");
-  removeBtn.addEventListener("click", () => {
+  const removeButton = document.createElement("button");
+  removeButton.textContent = "x";
+  removeButton.classList.add("remove-tag");
+  removeButton.addEventListener("click", () => {
     tag.remove(); // Supprime le tag du DOM
   });
 
-  tag.appendChild(removeBtn);
-  return tag;
-}
-
-function selectOption(type, option) {
-  addLabel(option, type);
-  const tag = Tag(option);
-  const selectedTags = document.querySelector(".selected-tags");
-  selectedTags.appendChild(tag);
+  tag.appendChild(removeButton);
+  document.querySelector(".tag-list").appendChild(tag); // Ajoute le tag dans tagList
 }
 
 function getUniqueTags(type, recipes) {
