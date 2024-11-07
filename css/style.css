@@ -272,7 +272,7 @@ header{
 }
 
 /* Bouton pour vider le champ de recherche */
-.clear-button {
+.reset-button {
   position: absolute;
   right: 18%;
   top: 36%;

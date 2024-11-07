@@ -1,5 +1,8 @@
-import { addLabel } from "./LabelSearch.js";
-import { filterList, filterRecipesByInput } from "../modules/recipes.js"; // Importe la logique de filtrage
+import {
+  filterList,
+  filterRecipesByInput,
+  createKeySearch,
+} from "../modules/recipes.js";
 import { updateRecipes } from "../components/Recipes.js";
 
 export function Filter(recipes, setRecipes) {
@@ -12,53 +15,87 @@ export function Filter(recipes, setRecipes) {
   const filtersBox = document.createElement("div");
   filtersBox.classList.add("filters-box");
 
+  // Passer `addTag` en tant que paramètre
   const ingredientsFilter = Dropdown(
     "Ingrédients",
-    getUniqueTags("ingredients", recipes)
+    getUniqueTags("ingredients", recipes),
+    addTag
   );
   const appliancesFilter = Dropdown(
     "Appareils",
-    getUniqueTags("appliances", recipes)
+    getUniqueTags("appliances", recipes),
+    addTag
   );
   const utensilsFilter = Dropdown(
     "Ustensiles",
-    getUniqueTags("ustensils", recipes)
+    getUniqueTags("ustensils", recipes),
+    addTag
   );
 
-  // Crée un élément pour afficher le nombre de recettes
   const recipeCount = document.createElement("span");
   recipeCount.classList.add("recipe-count");
-  recipeCount.textContent = `${recipes.length} recettes`; // Initialiser le compteur
+  recipeCount.textContent = `${recipes.length} recettes`;
 
   const tagList = document.createElement("div");
   tagList.classList.add("tag-list");
+  tagList.id = "tag-list";
 
   filtersSection.append(recipeControls, tagList);
   recipeControls.append(filtersBox, recipeCount);
   filtersBox.append(ingredientsFilter, appliancesFilter, utensilsFilter);
 
-  // Fonction pour mettre à jour le compteur de recettes directement dans le DOM
+  function applyFilters(inputText = "") {
+    const tags = Array.from(tagList.querySelectorAll(".tag")).map(
+      (tag) => tag.firstChild.textContent
+    );
+    console.log("tags", tags);
+
+    const keySearch = createKeySearch(inputText, tags);
+    console.log("KeySearch:", keySearch);
+
+    if (keySearch && keySearch.length > 0 && setRecipes) {
+      const filteredRecipes = filterRecipesByInput(keySearch, setRecipes);
+      updateRecipes(filteredRecipes); // Met à jour les recettes affichées
+      updateRecipeCount(filteredRecipes); // Met à jour le compteur de recettes
+    } else {
+      updateRecipes(setRecipes); // Réinitialise l'affichage avec toutes les recettes
+      updateRecipeCount(setRecipes); // Utilise `setRecipes` pour le compteur initial
+    }
+  }
+
+  // Fonction pour mettre à jour le compteur de recettes
   function updateRecipeCount(filteredRecipes) {
-    recipeCount.textContent = `${filteredRecipes.length} recettes`; // Met à jour le compteur
+    recipeCount.textContent = `${filteredRecipes.length} recettes`;
   }
 
-  // Utilisez `updateRecipeCount` chaque fois que les recettes sont filtrées
-  function applyFilters(keySearch) {
-    const filteredRecipes = filterRecipesByInput(keySearch, setRecipes);
-    updateRecipes(filteredRecipes);
-    updateRecipeCount(filteredRecipes);
-  }
+  // Fonction pour ajouter un tag et appliquer les filtres
+  function addTag(tagText) {
+    if (
+      !Array.from(tagList.children).some((tag) => tag.textContent === tagText)
+    ) {
+      const tag = document.createElement("div");
+      tag.classList.add("tag");
+      tag.textContent = tagText;
 
-  function resetFilters() {
-    // Code pour effacer tous les filtres...
-    updateRecipes(setRecipes); // Réinitialise l'affichage avec `setRecipes`
-    updateRecipeCount(setRecipes); // Met à jour le compteur avec le total
+      const removeButton = document.createElement("button");
+      removeButton.textContent = "x";
+      removeButton.classList.add("remove-tag");
+      removeButton.addEventListener("click", () => {
+        tag.remove();
+        applyFilters();
+      });
+
+      tag.appendChild(removeButton);
+      tagList.appendChild(tag);
+      applyFilters();
+    }
   }
 
   return filtersSection;
 }
 
-function Dropdown(label, options) {
+// Fonction Dropdown avec `addTag` passé comme paramètre
+function Dropdown(label, options, addTag) {
   const wrapper = document.createElement("div");
   wrapper.classList.add("dropdown");
 
@@ -67,29 +104,24 @@ function Dropdown(label, options) {
   dropdownLabel.classList.add("dropdown-label");
   wrapper.appendChild(dropdownLabel);
 
-  // Conteneur de la liste déroulante
   const list = document.createElement("ul");
   list.classList.add("dropdown-list");
 
-  // Crée l'input de recherche, caché par défaut
   const inputContainer = document.createElement("div");
   inputContainer.classList.add("dropdown-input-container");
 
   const inputField = document.createElement("input");
   inputField.type = "text";
   inputField.classList.add("dropdown-input");
-  inputField.style.display = "none"; // Masqué par défaut
+  inputField.style.display = "none";
   inputContainer.appendChild(inputField);
   list.appendChild(inputContainer);
 
-  // Crée un bouton de nettoyage pour l'input de recherche
-  const clearSearchButton = document.createElement("button");
-  clearSearchButton.classList.add("clear-button");
-  clearSearchButton.textContent = "✕"; // Bouton pour vider la recherche
-
-  // Masquer le bouton de nettoyage tant que le menu n'est pas ouvert
-  clearSearchButton.style.display = "none";
-  inputField.parentNode.insertBefore(clearSearchButton, inputField.nextSibling);
+  const eraseSearchButton = document.createElement("button");
+  eraseSearchButton.classList.add("reset-button");
+  eraseSearchButton.textContent = "✕";
+  eraseSearchButton.style.display = "none";
+  inputField.parentNode.insertBefore(eraseSearchButton, inputField.nextSibling);
 
   const triggerSearchButton = document.createElement("button");
   triggerSearchButton.classList.add("trigger-search-button");
@@ -103,49 +135,47 @@ function Dropdown(label, options) {
     const li = document.createElement("li");
     li.textContent = option;
     li.addEventListener("click", () => {
-      addTag(option); // Appel à la fonction pour ajouter un tag
+      addTag(option);
       closeDropdown(); // Ferme le dropdown après sélection
     });
     list.appendChild(li);
   });
 
   inputContainer.appendChild(inputField);
-  inputContainer.appendChild(clearSearchButton);
+  inputContainer.appendChild(eraseSearchButton);
   inputContainer.appendChild(triggerSearchButton);
   wrapper.appendChild(list);
 
-  // Fonction pour ouvrir/fermer le dropdown
   function toggleDropdown() {
     const isVisible = list.style.display === "block";
     list.style.display = isVisible ? "none" : "block";
-    inputField.style.display = isVisible ? "none" : "block"; // Affiche ou masque l'input de recherche
-    clearSearchButton.style.display = isVisible ? "none" : "inline"; // Affiche ou masque le bouton de nettoyage
-    inputField.focus(); // Ajouter ou retirer la classe active pour la flèche et le radius
+    inputField.style.display = isVisible ? "none" : "block";
+    eraseSearchButton.style.display = isVisible ? "none" : "inline";
+
     if (isVisible) {
       wrapper.classList.remove("active");
     } else {
       wrapper.classList.add("active");
     }
-
     inputField.focus();
   }
 
   function closeDropdown() {
     list.style.display = "none";
     inputField.style.display = "none";
-    clearSearchButton.style.display = "none";
-    wrapper.classList.remove("active"); // Retire la classe active lors de la fermeture
-    inputField.value = "";
+    eraseSearchButton.style.display = "none";
+    wrapper.classList.remove("active");
+    inputField.value = ""; // Reset du champ input
   }
 
-  wrapper.addEventListener("click", toggleDropdown); // Rend tout le dropdown cliquable
+  wrapper.addEventListener("click", toggleDropdown);
 
   inputField.addEventListener("input", (e) => {
     const searchTerm = e.target.value.toLowerCase();
-    filterList(list, searchTerm); // Utilise le filtre importé
+    filterList(list, searchTerm);
   });
 
-  clearSearchButton.addEventListener("click", () => {
+  eraseSearchButton.addEventListener("click", () => {
     inputField.value = "";
     filterList(list, "");
     inputField.focus();
@@ -154,23 +184,7 @@ function Dropdown(label, options) {
   return wrapper;
 }
 
-// Fonction pour ajouter un tag dans tagList
-function addTag(tagText) {
-  const tag = document.createElement("div");
-  tag.classList.add("tag");
-  tag.textContent = tagText;
-
-  const removeButton = document.createElement("button");
-  removeButton.textContent = "x";
-  removeButton.classList.add("remove-tag");
-  removeButton.addEventListener("click", () => {
-    tag.remove(); // Supprime le tag du DOM
-  });
-
-  tag.appendChild(removeButton);
-  document.querySelector(".tag-list").appendChild(tag); // Ajoute le tag dans tagList
-}
-
+// Fonction pour extraire les tags uniques
 function getUniqueTags(type, recipes) {
   const tags = new Set();
   recipes.forEach((recipe) => {

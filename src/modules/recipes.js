@@ -2,48 +2,68 @@
 //* --------------------------------------------------
 
 export function filterRecipesByInput(keySearch, recipes) {
-  // Réinitialise les résultats pour chaque nouvelle recherche
+  if (!keySearch || !recipes || recipes.length === 0) {
+    return []; // Si `keySearch` ou `recipes` est invalide, retourne un tableau vide
+  }
+
   let filteredRecipes = [];
 
-  // Boucle sur chaque recette
   for (let i = 0; i < recipes.length; i++) {
     const recipe = recipes[i];
-    let matchFound = true; // Considère d'abord que la recette correspond
+    let matchFound = true;
 
-    // Parcourt chaque mot-clé de `keySearch`
+    // Normalise les champs de la recette pour faciliter la comparaison
+    const nameNormalized = normalizeText(recipe.name);
+    const descriptionNormalized = normalizeText(recipe.description);
+
+    const ingredientsNormalized = recipe.ingredients.map((ingredient) =>
+      normalizeText(ingredient.ingredient)
+    );
+
     for (let j = 0; j < keySearch.length; j++) {
-      const keyword = keySearch[j].toLowerCase();
+      const keyword = keySearch[j];
 
-      // Vérifie si le mot-clé est dans le nom, la description ou les ingrédients
-      const inName = recipe.name.toLowerCase().includes(keyword);
-      const inDescription = recipe.description.toLowerCase().includes(keyword);
-      const inIngredients = recipe.ingredients.some((ingredient) =>
-        ingredient.ingredient.toLowerCase().includes(keyword)
+      const inName = nameNormalized.includes(keyword);
+      const inDescription = descriptionNormalized.includes(keyword);
+      const inIngredients = ingredientsNormalized.some((ingredient) =>
+        ingredient.includes(keyword)
       );
 
-      // Si le mot-clé n'est trouvé nulle part, la recette ne correspond pas
       if (!inName && !inDescription && !inIngredients) {
         matchFound = false;
-        break; // Arrête la vérification si un mot-clé manque
+        break;
       }
     }
 
-    // Si tous les mots-clés sont présents, ajoute la recette entière aux résultats
     if (matchFound) {
       filteredRecipes.push(recipe);
     }
   }
 
-  // Retourne une nouvelle liste de recette avec les recettes filtrées
   return filteredRecipes;
+}
+
+export function createKeySearch(input, tags = []) {
+  const inputText = normalizeText(input);
+  if (inputText.length < 3 || /[^a-zA-Z0-9\s-]/.test(inputText)) {
+    return null;
+  } else {
+    const keySearch = inputText
+      .split(" ")
+      .filter((word) => word.length >= 3)
+      .map((word) => word); // Normalise chaque mot-clé pour ignorer accents et majuscules
+
+    tags.forEach((tag) => {
+      keySearch.push(tag);
+    });
+
+    return keySearch;
+  }
 }
 
 export function filterList(list, searchTerm) {
   // Normalise le terme de recherche pour ignorer les accents et rendre la recherche insensible à la casse
-  const normalizedSearchTerm = searchTerm
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase();
+  const normalizedSearchTerm = normalizeText(searchTerm);
 
   const items = list.querySelectorAll("li");
 
@@ -52,10 +72,7 @@ export function filterList(list, searchTerm) {
     const item = items[i];
 
     // Normalise le texte de l'élément pour ignorer les accents
-    const itemText = item.textContent
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .toLowerCase();
+    const itemText = normalizeText(item.textContent);
 
     // Affiche ou cache l'élément selon s'il contient le terme de recherche
     if (itemText.includes(normalizedSearchTerm)) {
@@ -64,6 +81,13 @@ export function filterList(list, searchTerm) {
       item.style.display = "none"; // Cache l'élément s'il ne correspond pas
     }
   }
+}
+
+function normalizeText(text) {
+  return text
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
 }
 
 //* Fonction de recherche en utilisant les méthodes de l'objet Array
