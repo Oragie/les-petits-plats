@@ -1,17 +1,25 @@
-import { api } from "../api/api.js";
-
-const recipesSection = document.createElement("section");
-recipesSection.classList.add("recipes");
-
 // Fonction qui génère la section des recettes
-export function Recipes(filteredApi = api) {
-  updateRecipes(filteredApi); // Charge initialement toutes les recettes ou celles filtrées
+export function Recipes(recipes) {
+  const recipesSection = document.createElement("section");
+  recipesSection.classList.add("recipes");
+  recipesSection.id = "recipes-section";
+  recipes.forEach((recipe) => {
+    const recipeCard = createRecipeCard(
+      recipe.image,
+      recipe.name,
+      recipe.time,
+      recipe.ingredients,
+      recipe.description
+    );
+    recipesSection.appendChild(recipeCard);
+  });
+
   return recipesSection;
 }
 
 // Fonction pour mettre à jour l'affichage des recettes
-export function updateRecipes(filteredApi) {
-  const recipes = filteredApi.getAllRecipes();
+export function updateRecipes(recipes) {
+  const recipesSection = document.querySelector("#recipes-section");
   recipesSection.innerHTML = ""; // Vide la section actuelle
 
   // Pour chaque recette, créer une carte et l'ajouter à la section

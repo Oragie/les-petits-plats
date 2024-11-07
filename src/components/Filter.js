@@ -1,8 +1,7 @@
-import { api } from "../api/api.js";
 import { addLabel } from "./LabelSearch.js";
-import { filterList } from "../utils/filterLogic.js"; // Importe la logique de filtrage
+import { filterList } from "../modules/recipes.js"; // Importe la logique de filtrage
 
-export function Filter() {
+export function Filter(recipes) {
   const filtersSection = document.createElement("div");
   filtersSection.classList.add("filters");
 
@@ -11,8 +10,6 @@ export function Filter() {
 
   const filtersBox = document.createElement("div");
   filtersBox.classList.add("filters-box");
-
-  const recipes = api.getAllRecipes();
 
   const ingredientsFilter = Dropdown(
     "Ingrédients",
@@ -29,7 +26,7 @@ export function Filter() {
 
   const recipeCount = document.createElement("span");
   recipeCount.classList.add("recipe-count");
-  recipeCount.textContent = `${api.getAllRecipes().length} recettes`;
+  recipeCount.textContent = `${recipes.length} recettes`;
 
   const tagBox = document.createElement("section");
   tagBox.classList.add("tag-box");

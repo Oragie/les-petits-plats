@@ -1,14 +1,9 @@
-import { api } from "../api/api.js";
-
-// Déclaration des données en dehors de la fonction
-const recipes = api.getAllRecipes();
-
 //* Fonction de recherche en utilisant les boucles natives
 //* --------------------------------------------------
 
-export function searchRecipesWithLoops(keySearch) {
+export function filterRecipesByInput(keySearch, recipes) {
   // Réinitialise les résultats pour chaque nouvelle recherche
-  let results = [];
+  let filteredRecipes = [];
 
   // Boucle sur chaque recette
   for (let i = 0; i < recipes.length; i++) {
@@ -35,14 +30,40 @@ export function searchRecipesWithLoops(keySearch) {
 
     // Si tous les mots-clés sont présents, ajoute la recette entière aux résultats
     if (matchFound) {
-      results.push(recipe);
+      filteredRecipes.push(recipe);
     }
   }
 
-  // Retourne une nouvelle API avec les recettes filtrées
-  return {
-    getAllRecipes: () => results,
-  };
+  // Retourne une nouvelle liste de recette avec les recettes filtrées
+  return filteredRecipes;
+}
+
+export function filterList(list, searchTerm) {
+  // Normalise le terme de recherche pour ignorer les accents et rendre la recherche insensible à la casse
+  const normalizedSearchTerm = searchTerm
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+
+  const items = list.querySelectorAll("li");
+
+  // Boucle sur chaque élément de la liste pour appliquer le filtre
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+
+    // Normalise le texte de l'élément pour ignorer les accents
+    const itemText = item.textContent
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase();
+
+    // Affiche ou cache l'élément selon s'il contient le terme de recherche
+    if (itemText.includes(normalizedSearchTerm)) {
+      item.style.display = ""; // Affiche l'élément s'il correspond au terme de recherche
+    } else {
+      item.style.display = "none"; // Cache l'élément s'il ne correspond pas
+    }
+  }
 }
 
 //* Fonction de recherche en utilisant les méthodes de l'objet Array
@@ -70,7 +91,5 @@ export function searchRecipesWithLoops(keySearch) {
 //   });
 
 //   // Retourne une nouvelle API avec les recettes filtrées
-//   return {
-//     getAllRecipes: () => results,
-//   };
+//   return results;
 // }

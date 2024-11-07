@@ -1,9 +1,8 @@
 import { createKeySearch } from "../utils/createKeySearch.js";
-import { searchRecipesWithLoops } from "../modules/recipes.js";
+import { filterRecipesByInput } from "../modules/recipes.js";
 import { updateRecipes } from "../components/Recipes.js";
-import { api } from "../api/api.js";
 
-export function Hero() {
+export function Hero(recipes, setRecipes) {
   const heroSection = document.createElement("section");
   heroSection.classList.add("hero");
 
@@ -55,14 +54,15 @@ export function Hero() {
   // Event listener pour le bouton de recherche
   function validateInput() {
     const inputText = searchBar.value.trim();
-    const keySearch = createKeySearch(inputText); // Appel de la fonction dans utils
-
-    if (keySearch) {
-      console.log("Tableau keySearch :", keySearch); // Affiche `keySearch` si valide
-      errorMessage.style.display = "none"; // Cache le message d'erreur
-      searchBar.classList.remove("error-border"); // Retire la bordure rouge si pas d'erreur
-      const filteredApi = searchRecipesWithLoops(keySearch); // Récupère les recettes filtrées
-      updateRecipes(filteredApi); // Met à jour l'affichage des recettes avec les nouvelles recettes
+    if (inputText.length >= 3) {
+      const keySearch = createKeySearch(inputText); // Appel de la fonction dans utils
+      if (keySearch) {
+        console.log("Tableau keySearch :", keySearch); // Affiche `keySearch` si valide
+        errorMessage.style.display = "none"; // Cache le message d'erreur
+        searchBar.classList.remove("error-border"); // Retire la bordure rouge si pas d'erreur
+        const filteredRecipes = filterRecipesByInput(keySearch, setRecipes); // Récupère les recettes filtrées
+        updateRecipes(filteredRecipes); // Met à jour l'affichage des recettes avec les nouvelles recettes
+      }
     } else {
       errorMessage.textContent = "Veuillez entrer au moins 3 caractères.";
       errorMessage.style.display = "block";
@@ -76,18 +76,10 @@ export function Hero() {
     searchBar.classList.remove("error-border"); // Retire la bordure d'erreur
     errorMessage.style.display = "none"; // Cache le message d'erreur
     searchBar.focus(); // Remet le focus sur l'input
-    updateRecipes(api); // Réinitialise l'affichage des recettes avec l'API complète
+    updateRecipes(recipes); // Réinitialise l'affichage des recettes avec l'API complète
   }
 
-  // Active le bouton de nettoyage lors de l'appui sur "Échap"
-  searchBar.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") {
-      clearButton.click(); // Déclenche un clic sur le bouton de nettoyage
-    } else if (event.key === "Enter") {
-      validateInput(); // Valide la saisie si "Entrée" est pressée
-    }
-  });
-
+  searchBar.addEventListener("input", validateInput);
   searchButton.addEventListener("click", validateInput);
 
   return heroSection;
