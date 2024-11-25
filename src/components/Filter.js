@@ -166,10 +166,16 @@ function Dropdown(label, options, addTag) {
     li.id = option;
     li.addEventListener("click", () => {
       addTag(option, wrapper.id);
-      closeDropdown(option); // Ferme le dropdown après sélection
+      closeDropdown(option);
+      resetSearchFieldAndList(); // Réinitialise le champ et la liste
     });
     list.appendChild(li);
   });
+
+  function resetSearchFieldAndList() {
+    inputField.value = ""; // Vide le champ de recherche
+    filterList(list, ""); // Réinitialise la liste
+  }
 
   wrapper.appendChild(dropdownClosed);
   dropdownClosed.appendChild(dropdownLabel);
@@ -212,8 +218,7 @@ function Dropdown(label, options, addTag) {
   });
 
   eraseSearchButton.addEventListener("click", () => {
-    inputField.value = "";
-    filterList(list, "");
+    resetSearchFieldAndList();
     inputField.focus();
     toggleDropdown();
   });
