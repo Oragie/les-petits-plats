@@ -1,27 +1,90 @@
 //* Fonction de recherche en utilisant les boucles natives
 //* --------------------------------------------------
+let originalRecipes = [];
 
-export function filterRecipesByInput(keySearch, recipes) {
-  if (!keySearch || !recipes || recipes.length === 0) {
-    return []; // Si `keySearch` ou `recipes` est invalide, retourne un tableau vide
+export function setOriginalRecipes(recipes) {
+  originalRecipes = recipes;
+}
+
+export function getOriginalRecipes() {
+  return originalRecipes;
+}
+export function filterCommonRecipes(inputSearchBar, tags) {
+  let filteredByInput = [];
+  let filteredByTags = [];
+
+  // Cas 1 : Filtrage par input uniquement (tags est vide ou non défini)
+  if (inputSearchBar.length > 0) {
+    filteredByInput = filterRecipesByInput(inputSearchBar);
+  } else {
+    // Si aucun input, on prend toutes les recettes
+    filteredByInput = originalRecipes;
   }
 
-  let filteredRecipes = [];
+  // Cas 2 : Filtrage par tags uniquement (input est vide ou non défini)
+  if (tags.length > 0) {
+    filteredByTags = filterRecipesByTags(tags);
+  } else {
+    // Si aucun tag, on prend toutes les recettes
+    filteredByTags = originalRecipes;
+  }
 
-  for (let i = 0; i < recipes.length; i++) {
-    const recipe = recipes[i];
+  // Si on a seulement l'un des deux filtres, retourne celui qui a été filtré
+  if (inputSearchBar.length === 0) return filteredByTags;
+  if (tags.length === 0) return filteredByInput;
+
+  // Cas 3 : Si input et tags sont tous les deux présents, on renvoie l'intersection
+  if (inputSearchBar && tags.length > 0) {
+    let commonRecipes = [];
+    for (let i = 0; i < filteredByInput.length; i++) {
+      const recipeInput = filteredByInput[i];
+      for (let j = 0; j < filteredByTags.length; j++) {
+        if (recipeInput === filteredByTags[j]) {
+          commonRecipes.push(recipeInput);
+          break;
+        }
+      }
+    }
+    return commonRecipes;
+  }
+
+  // Cas 4 : Si aucun tag et aucun input, renvoie toutes les recettes
+  if (
+    (!inputSearchBar || inputSearchBar.length === 0) &&
+    (!tags || tags.length === 0)
+  ) {
+    return originalRecipes;
+  }
+}
+
+// Fonction pour normaliser le texte en supprimant les accents et en convertissant en minuscules
+function normalizeText(text) {
+  return text
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
+// Fonction pour filtrer les recettes par input (barre de recherche)
+export function filterRecipesByInput(inputSearchBar) {
+  if (!inputSearchBar || !originalRecipes || originalRecipes.length === 0) {
+    return [];
+  }
+
+  let filteredRecipesByInput = [];
+
+  for (let i = 0; i < originalRecipes.length; i++) {
+    const recipe = originalRecipes[i];
     let matchFound = true;
 
-    // Normalise les champs de la recette pour faciliter la comparaison
     const nameNormalized = normalizeText(recipe.name);
     const descriptionNormalized = normalizeText(recipe.description);
-
     const ingredientsNormalized = recipe.ingredients.map((ingredient) =>
       normalizeText(ingredient.ingredient)
     );
 
-    for (let j = 0; j < keySearch.length; j++) {
-      const keyword = keySearch[j];
+    for (let j = 0; j < inputSearchBar.length; j++) {
+      const keyword = inputSearchBar[j];
 
       const inName = nameNormalized.includes(keyword);
       const inDescription = descriptionNormalized.includes(keyword);
@@ -36,84 +99,59 @@ export function filterRecipesByInput(keySearch, recipes) {
     }
 
     if (matchFound) {
-      filteredRecipes.push(recipe);
+      filteredRecipesByInput.push(recipe);
+    }
+  }
+  return filteredRecipesByInput;
+}
+
+// Fonction pour filtrer les recettes par tags
+// Fonction pour filtrer les recettes par tags
+export function filterRecipesByTags(tags) {
+  if (
+    !tags ||
+    tags.length === 0 ||
+    !originalRecipes ||
+    originalRecipes.length === 0
+  ) {
+    return [];
+  }
+
+  let filteredRecipesByTags = [];
+
+  // Parcours des recettes
+  for (let i = 0; i < originalRecipes.length; i++) {
+    const recipe = originalRecipes[i];
+    let matchFound = true;
+
+    // Préparation des listes de comparaison pour la recette
+    const ingredients = recipe.ingredients.map(
+      (ingredient) => ingredient.ingredient
+    ); // Liste des ingrédients
+    const appliance = recipe.appliance; // Appareil
+    const utensils = recipe.ustensils; // Liste des ustensiles
+
+    // Vérification pour chaque tag
+    for (let j = 0; j < tags.length; j++) {
+      const tag = tags[j];
+
+      // Vérifie si le tag correspond à un ingrédient, un appareil ou un ustensile
+      const inIngredients = ingredients.includes(tag);
+      const inAppliance = appliance === tag;
+      const inUtensils = utensils.includes(tag);
+
+      // Si aucun match trouvé, la recette n'est pas valide pour ce tag
+      if (!inIngredients && !inAppliance && !inUtensils) {
+        matchFound = false;
+        break;
+      }
+    }
+
+    // Si tous les tags correspondent, ajoute la recette à la liste filtrée
+    if (matchFound) {
+      filteredRecipesByTags.push(recipe);
     }
   }
 
-  return filteredRecipes;
+  return filteredRecipesByTags;
 }
-
-export function createKeySearch(input, tags = []) {
-  const inputText = normalizeText(input);
-  if (inputText.length < 3 || /[^a-zA-Z0-9\s-]/.test(inputText)) {
-    return null;
-  } else {
-    const keySearch = inputText
-      .split(" ")
-      .filter((word) => word.length >= 3)
-      .map((word) => word); // Normalise chaque mot-clé pour ignorer accents et majuscules
-
-    tags.forEach((tag) => {
-      keySearch.push(tag);
-    });
-
-    return keySearch;
-  }
-}
-
-export function filterList(list, searchTerm) {
-  // Normalise le terme de recherche pour ignorer les accents et rendre la recherche insensible à la casse
-  const normalizedSearchTerm = normalizeText(searchTerm);
-
-  const items = list.querySelectorAll("li");
-
-  // Boucle sur chaque élément de la liste pour appliquer le filtre
-  for (let i = 0; i < items.length; i++) {
-    const item = items[i];
-
-    // Normalise le texte de l'élément pour ignorer les accents
-    const itemText = normalizeText(item.textContent);
-
-    // Affiche ou cache l'élément selon s'il contient le terme de recherche
-    if (itemText.includes(normalizedSearchTerm)) {
-      item.style.display = ""; // Affiche l'élément s'il correspond au terme de recherche
-    } else {
-      item.style.display = "none"; // Cache l'élément s'il ne correspond pas
-    }
-  }
-}
-
-function normalizeText(text) {
-  return text
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase();
-}
-
-//* Fonction de recherche en utilisant les méthodes de l'objet Array
-//* ----------------------------------------------------
-
-// export function searchRecipesWithLoops(keySearch) {
-//   // Filtre les recettes pour ne garder que celles qui contiennent tous les mots-clés
-//   const results = recipes.filter((recipe) => {
-//     // Vérifie que chaque mot-clé est présent dans le nom, la description ou les ingrédients
-//     return keySearch.every((keyword) => {
-//       const lowerKeyword = keyword.toLowerCase();
-
-//       // Vérifie si le mot-clé est dans le nom, la description, ou les ingrédients
-//       const inName = recipe.name.toLowerCase().includes(lowerKeyword);
-//       const inDescription = recipe.description
-//         .toLowerCase()
-//         .includes(lowerKeyword);
-//       const inIngredients = recipe.ingredients.some((ingredient) =>
-//         ingredient.ingredient.toLowerCase().includes(lowerKeyword)
-//       );
-
-//       // Retourne `true` si le mot-clé est trouvé dans au moins l'un de ces champs
-//       return inName || inDescription || inIngredients;
-//     });
-//   });
-
-//   // Retourne une nouvelle API avec les recettes filtrées
-//   return results;
-// }

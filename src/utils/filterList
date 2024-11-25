@@ -1,0 +1,45 @@
+// Fonction pour filtrer les éléments d'une liste en fonction d'un terme de recherche
+export function filterList(list, searchTerm) {
+  // Récupère les recettes originales (statiques)
+  const originalRecipes = getOriginalRecipes();
+
+  // Normalise le terme de recherche
+  const normalizedSearchTerm = normalizeText(searchTerm);
+
+  // Filtre les recettes en fonction du terme de recherche
+  const filteredRecipes = originalRecipes.filter((recipe) => {
+    const nameNormalized = normalizeText(recipe.name);
+    const descriptionNormalized = normalizeText(recipe.description);
+    const ingredientsNormalized = recipe.ingredients.map((ingredient) =>
+      normalizeText(ingredient.ingredient)
+    );
+
+    // Vérifie si le terme correspond au nom, à la description ou aux ingrédients
+    const inName = nameNormalized.includes(normalizedSearchTerm);
+    const inDescription = descriptionNormalized.includes(normalizedSearchTerm);
+    const inIngredients = ingredientsNormalized.some((ingredient) =>
+      ingredient.includes(normalizedSearchTerm)
+    );
+
+    return inName || inDescription || inIngredients;
+  });
+
+  // Réinitialise la liste (efface les éléments actuels)
+  list.innerHTML = "";
+
+  // Ajoute uniquement les recettes filtrées
+  filteredRecipes.forEach((recipe) => {
+    const listItem = document.createElement("li");
+    listItem.textContent = recipe.name; // Par exemple, affiche uniquement le nom
+    listItem.classList.add("dropdown-item");
+    list.appendChild(listItem);
+  });
+}
+
+// Fonction de normalisation (utilisée pour garantir une comparaison insensible à la casse/accents)
+function normalizeText(text) {
+  return text
+    .normalize("NFD") // Décompose les caractères accentués
+    .replace(/[\u0300-\u036f]/g, "") // Supprime les accents
+    .toLowerCase(); // Convertit en minuscules
+}

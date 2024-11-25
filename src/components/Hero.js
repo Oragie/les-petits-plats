@@ -1,9 +1,10 @@
-import { filterRecipesByInput, createKeySearch } from "../modules/recipes.js";
+import { filterCommonRecipes, getOriginalRecipes } from "../modules/recipes.js";
 import { updateRecipes } from "../components/Recipes.js";
 
-export function Hero(recipes, setRecipes) {
+export function Hero() {
   const heroSection = document.createElement("section");
   heroSection.classList.add("hero");
+  heroSection.id = "hero";
 
   const heroText = document.createElement("h2");
   heroText.textContent =
@@ -11,6 +12,7 @@ export function Hero(recipes, setRecipes) {
 
   const searchContainer = document.createElement("div");
   searchContainer.classList.add("search-container");
+  searchContainer.id = "search-container";
 
   const searchBar = document.createElement("input");
   searchBar.setAttribute("type", "text");
@@ -19,10 +21,12 @@ export function Hero(recipes, setRecipes) {
     "Rechercher une recette, un ingrédient, ..."
   );
   searchBar.classList.add("search-bar");
+  searchBar.id = "search-bar";
 
   // Bouton pour vider le champ de recherche
   const clearButton = document.createElement("button");
   clearButton.classList.add("clear-button");
+  clearButton.id = "clear-button";
   clearButton.textContent = "✕"; // Icône de croix (✕)
 
   // Ajoute un écouteur pour vider le champ de recherche et réinitialiser l'affichage
@@ -32,6 +36,7 @@ export function Hero(recipes, setRecipes) {
 
   const searchButton = document.createElement("button");
   searchButton.classList.add("search-button");
+  searchButton.id = "search-button";
 
   const searchIcon = document.createElement("img");
   searchIcon.src = "../../assets/icons/loupe_noire.svg";
@@ -40,6 +45,7 @@ export function Hero(recipes, setRecipes) {
 
   const errorMessage = document.createElement("p");
   errorMessage.classList.add("error-message");
+  errorMessage.id = "error-message";
   errorMessage.style.display = "none"; // Caché par défaut
 
   // Ajout des éléments à la section `hero`
@@ -50,26 +56,38 @@ export function Hero(recipes, setRecipes) {
   searchContainer.appendChild(errorMessage);
   searchContainer.appendChild(searchButton);
 
-  // Event listener pour le bouton de recherche
+  // Event listener pour la recherche en temps réel
   function validateInput() {
     const inputText = searchBar.value.trim();
-    if (inputText.length >= 3) {
-      const tagList = document.querySelector("#tag-list");
-      const tags = Array.from(tagList.querySelectorAll(".tag")).map(
-        (tag) => tag.firstChild.textContent
-      );
-      const keySearch = createKeySearch(inputText, tags); // Appel de la fonction
-      if (keySearch) {
-        console.log("Tableau keySearch :", keySearch); // Affiche `keySearch` si valide
-        errorMessage.style.display = "none"; // Cache le message d'erreur
-        searchBar.classList.remove("error-border"); // Retire la bordure rouge si pas d'erreur
-        const filteredRecipes = filterRecipesByInput(keySearch, setRecipes); // Récupère les recettes filtrées
-        updateRecipes(filteredRecipes); // Met à jour l'affichage des recettes avec les nouvelles recettes
-      }
+    const tagList = document.querySelector("#tag-list");
+    const tags = Array.from(tagList.querySelectorAll(".tag")).map(
+      (tag) => tag.firstChild.textContent
+    );
+
+    // Vérifie que l'input est valide (minimum 3 caractères)
+    if (inputText.length >= 3 || tags.length > 0) {
+      // Crée `inputSearchBar` en normalisant les mots de l'input
+      const inputSearchBar = inputText
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .split(" ")
+        .filter((word) => word.length >= 3);
+
+      // Cache le message d'erreur
+      errorMessage.style.display = "none";
+      searchBar.classList.remove("error-border");
+
+      // Filtre les recettes avec `inputSearchBar` et `tags` via `filterCommonRecipes`
+      const filteredRecipes = filterCommonRecipes(inputSearchBar, tags);
+      updateRecipes(filteredRecipes); // Met à jour l'affichage
     } else {
+      // Affiche un message d'erreur si moins de 3 caractères sans tags
       errorMessage.textContent = "Veuillez entrer au moins 3 caractères.";
       errorMessage.style.display = "block";
-      searchBar.classList.add("error-border"); // Ajoute la bordure rouge en cas d'erreur
+      searchBar.classList.add("error-border");
+      const originalRecipes = getOriginalRecipes();
+      updateRecipes(originalRecipes); // Réinitialise les recettes si pas de filtres valides
     }
   }
 
@@ -79,7 +97,8 @@ export function Hero(recipes, setRecipes) {
     searchBar.classList.remove("error-border"); // Retire la bordure d'erreur
     errorMessage.style.display = "none"; // Cache le message d'erreur
     searchBar.focus(); // Remet le focus sur l'input
-    updateRecipes(recipes); // Réinitialise l'affichage des recettes avec l'API complète
+    const originalRecipes = getOriginalRecipes();
+    updateRecipes(originalRecipes); // Réinitialise les recettes si pas de filtres valides
   }
 
   searchBar.addEventListener("input", validateInput);

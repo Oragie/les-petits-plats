@@ -197,7 +197,7 @@ header{
   display: flex;
   flex-direction: row;
   justify-content: center;
-  align-items: center;
+  align-items: top;
   flex-wrap: wrap;
   gap: 2rem;
 }
@@ -207,9 +207,10 @@ header{
   position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   width: 180px;
-  padding: 1rem;
+  height: min-content;
+  padding: 1rem 1rem 1rem 1rem;
   border-radius: var(--border-radius);
   border: 1px solid var(--bg-color);
   background-color: var(--white-color);
@@ -219,21 +220,29 @@ header{
   font-weight: 400;
   cursor: pointer;
   box-shadow: 0px 4px 34px 30px #0000000A;
+  transition: border-radius 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Conteneur fermé du dropdown */
+.dropdown-closed {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
 }
 
 /* Icône de flèche vers le bas */
-.dropdown::after {
+.dropdown-closed::after {
   content: "▼";
   font-size: 0.8rem;
   color: var(--secondary-color);
-  position: absolute;
-  right: 1rem;
   transition: transform 0.2s;
 }
 
 /* Flèche vers le haut quand le dropdown est actif */
-.dropdown.active::after {
-  content: "▲"; /* Change la flèche vers le haut */
+.dropdown.active .dropdown-closed::after {
+  content: "▲";
+  transform: rotate(180deg);
 }
 
 /* Radius ajusté quand le dropdown est ouvert */
@@ -242,26 +251,39 @@ header{
   border-bottom-right-radius: 0;
 }
 
-.dropdown-label {
-  font-weight: 500;
-}
-
-/* Conteneur de la barre de recherche */
-.dropdown-input-container {
-  position: sticky; /* Rend le conteneur de l'input "collant" */
-  top: 0; /* Fixe le conteneur en haut du dropdown */
-  width: 100%; /* S'assure que le conteneur prend toute la largeur du dropdown */
-  padding: 1rem;
-  box-sizing: border-box; /* Inclut le padding dans la largeur totale */
+/* Conteneur actif du dropdown */
+.active-Dropdown-contener {
   display: flex;
-  justify-content: center;
+  flex-direction: column; /* Arrange verticalement les éléments */
+  gap: 0.5rem; /* Espacement entre la barre de recherche et les autres éléments */
+  padding: 0.5rem 0; /* Ajoute un peu d'espace autour */
+  box-sizing: border-box;
+  position: relative;
+}
+/* Conteneur de la barre de recherche */
+.active-Dropdown-contener {
+  position: relative;
+  padding: 0;
+  
+  display: none; /* Masqué au début */
   
 }
 
-.dropdown-input {
+.dropdown-input-container{
   position: relative;
-  width: 100%; /* Ajuste la largeur de l'input au conteneur */
-  max-width: 90%; /* Limite la largeur pour éviter le débordement */
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  margin-top: 1rem;
+  padding: 0;
+  margin-left: 0%;
+  margin-right: 0;
+}
+
+/* Barre de recherche */
+.dropdown-input {
+  width: 20vh; /* Ajuste la largeur de l'input au conteneur */
+  max-width: 100%; /* Pas de limitation de largeur */
   border: 1px solid var(--fadedtext-color); /* Bordure grise */
   color: var(--secondary-color); /* Couleur du texte */
   background-color: var(--white-color); /* Fond blanc */
@@ -274,8 +296,8 @@ header{
 /* Bouton pour vider le champ de recherche */
 .reset-button {
   position: absolute;
-  right: 18%;
-  top: 36%;
+  right: 12%;
+  top: 25%;
   background: none;
   border: none;
   font-size: 0.8rem;
@@ -288,8 +310,8 @@ header{
 /* Bouton de recherche */
 .trigger-search-button {
   position: absolute;
-  right: 11%;
-  top: 40%;
+  right: 5%;
+  top: 30%;
   background: none;
   border: none;
   cursor: pointer;
@@ -297,6 +319,21 @@ header{
   display: flex;
   align-items: center;
 }
+
+.item-selected{
+  position: relative;
+  top: 100%;
+  left: -9%;
+  height: 1,5rem;
+  width: 180px;
+  background-color: var(--primary-color);
+  padding: 0.4rem 1rem;
+  cursor: pointer;
+  font-size: 1rem;
+  margin: 0.05rem 0;
+
+}
+
 
 /* Liste déroulante */
 .dropdown-list {
@@ -325,6 +362,8 @@ header{
 .dropdown-list li {
   padding: 8px 16px;
   cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s;
 }
 
 .dropdown-list li:hover {
@@ -332,12 +371,57 @@ header{
   color: white;
 }
 
-.recipe-count {
+.recipes-count {
   font-family: "Anton";
   font-synthesis: none;
   font-size: 1.5rem;
   color: var(--secondary-color);
 }
+
+/* Conteneur des éléments sélectionnés */
+.selected-items-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--fadedtext-color);
+  display: none; /* Caché par défaut */
+}
+
+/* Styles pour chaque tag sélectionné */
+.selected-items-container .dropdown-item {
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Icône de suppression pour les items sélectionnés */
+.selected-items-container .remove-tag {
+  background: none;
+  border: none;
+  color: var(--secondary-color);
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+
+/* Icône de suppression pour les items sélectionnés */
+.clear-iconItems {
+  background: none;
+  border: none;
+  color: var(--secondary-color);
+  font-size: 0.8rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: block;
+}
+
 
 /* Conteneur pour les tags */
 .tag-list {
