@@ -289,7 +289,7 @@ header{
   background-color: var(--white-color); /* Fond blanc */
   padding: 0.5rem; /* Ajoute un peu de padding */
   border-radius: 4px; /* Arrondit légèrement les coins */
-  font-size: 1rem; /* Taille du texte */
+  
   outline: none; /* Supprime la bordure par défaut au focus */
 }
 
