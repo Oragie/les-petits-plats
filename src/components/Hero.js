@@ -1,5 +1,4 @@
-import { filterCommonRecipes, getOriginalRecipes } from "../modules/recipes.js";
-import { updateRecipes } from "../components/Recipes.js";
+import { validateTags } from "../components/Filter.js";
 
 export function Hero() {
   const heroSection = document.createElement("section");
@@ -66,34 +65,20 @@ export function Hero() {
 
     // Vérifie que l'input est valide (minimum 3 caractères)
     if (inputText.length >= 3 || tags.length > 0) {
-      // Crée `inputSearchBar` en normalisant les mots de l'input
-      const inputSearchBar = inputText
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .split(" ")
-        .filter((word) => word.length >= 3);
-
       // Cache le message d'erreur
       errorMessage.style.display = "none";
       searchBar.classList.remove("error-border");
 
-      // Filtre les recettes avec `inputSearchBar` et `tags` via `filterCommonRecipes`
-      const filteredRecipes = filterCommonRecipes(inputSearchBar, tags);
-      updateRecipes(filteredRecipes); // Met à jour l'affichage
-
-      // Si aucune recette n'est trouvée, affiche un message
-      if (filteredRecipes.length === 0) {
-        errorMessage.style.display = "block";
-        errorMessage.textContent = `Aucune recette ne contient ‘${inputText}’ vous pouvez chercher « tarte aux pommes », « poisson », etc.`;
-      }
+      // Update recipes and dropdowns using validateTags
+      validateTags();
     } else {
       // Affiche un message d'erreur si moins de 3 caractères sans tags
       errorMessage.textContent = "Veuillez entrer au moins 3 caractères.";
       errorMessage.style.display = "block";
       searchBar.classList.add("error-border");
-      const originalRecipes = getOriginalRecipes();
-      updateRecipes(originalRecipes); // Réinitialise les recettes si pas de filtres valides
+
+      // Update recipes and dropdowns using validateTags
+      validateTags();
     }
   }
 
@@ -103,8 +88,7 @@ export function Hero() {
     searchBar.classList.remove("error-border"); // Retire la bordure d'erreur
     errorMessage.style.display = "none"; // Cache le message d'erreur
     searchBar.focus(); // Remet le focus sur l'input
-    const originalRecipes = getOriginalRecipes();
-    updateRecipes(originalRecipes); // Réinitialise les recettes si pas de filtres valides
+    validateTags(); // Update recipes and dropdowns
   }
 
   searchBar.addEventListener("input", validateInput);
