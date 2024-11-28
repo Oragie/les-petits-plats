@@ -81,6 +81,12 @@ export function Hero() {
       // Filtre les recettes avec `inputSearchBar` et `tags` via `filterCommonRecipes`
       const filteredRecipes = filterCommonRecipes(inputSearchBar, tags);
       updateRecipes(filteredRecipes); // Met à jour l'affichage
+
+      // Si aucune recette n'est trouvée, affiche un message
+      if (filteredRecipes.length === 0) {
+        errorMessage.style.display = "block";
+        errorMessage.textContent = `Aucune recette ne contient ‘${inputText}’ vous pouvez chercher « tarte aux pommes », « poisson », etc.`;
+      }
     } else {
       // Affiche un message d'erreur si moins de 3 caractères sans tags
       errorMessage.textContent = "Veuillez entrer au moins 3 caractères.";
